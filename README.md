@@ -1,26 +1,40 @@
 @[TOC](python BP神经网络原理 以及 基于numpy的python代码实现)
-
+版权声明：本文为博主原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接和本声明。
+本文链接：https://blog.csdn.net/weixin_41578567/article/details/111482022
 # 1. 原理
+
 ## 1.1 神经网络结构
+
 输入层 + 隐含层 + 输出层
 一般来说，每一个隐含层都会需要定义一个激活函数，以此添加非线性的表现。
 
 ## 1.2 每层输入结构以及数据流转
+
 输入的数据，假设是10行的样本，有3个特征的数据，即维度(10, 3)的矩阵
+
 ### 1.2.1 输入层
+
 那么在神经网络的输入层，就需要有3个神经元，因为有3个特征。所以一次迭代的样本数是1，即batch_size=1的时候，输入的矩阵维度是(1, 3)
+
 ### 1.2.2 隐含层
+
 传递到下一层的隐含层（假设隐含层都是全连接层），假设有5个神经元，那么，在这一层之间的权重矩阵，就是维度为(3, 5)的矩阵。所以将输入矩阵(1, 3) 叉乘 权重矩阵(3, 5) 得到 (1, 5) 的输出矩阵，即为这层隐含层的输出了。可以理解为通过线性组合的方式将原始的3个特征增加到了5个特征。
+
 ### 1.2.3输出层
+
 一般来说，输出层只有一个神经元，根据激活函数将输出定义为分类/回归任务。
 所以在这一层的权重矩阵的维度是(上一层的神经元个数, 1)，也就是(5， 1)
 
 ## 1.3 初始权重及权重更新
+
 初始权重是随机设置的，虽说是随机设置，但其实也是有很多方法的，可以按照指定的分布设置随机数，也可以在设置随机权重后除以神经元个数的根号项（Xavier初始化）等等方法。初始了权重之后，就开始进行权重的迭代更新了，具体分为前向传播和反向传播。
+
 ### 1.3.1 前向传播
+
 前向传播是很简单的，就是将该层的初始值矩阵乘上权重矩阵，得到的输出再过一次该层的激活函数，得到最终该层的输出，直到最后是输出层的时候，即是最终的输出值，然后根据损失函数计算与目标值之间的损失，根据这个损失进行反向传播
 
 伪代码如下：[查看完整的基于numpy实现的代码](https://github.com/Irvinfaith/numpy_neural_network)
+
 ```powershell
 # 隐含层
 for (每一层 in 隐含层)：
@@ -81,6 +95,7 @@ $$
 优化方法主要依据梯度下降，很多优化器的演变都是基于梯度下降来的，即根据损失函数梯度的负方向不断逼近，就可以找到最小值。不明白梯度下降的，推荐阅读这篇[梯度下降](https://www.cnblogs.com/pinard/p/5970503.html)的文章，讲解很详细。
 
 #### 1.3.2.1 链式法则
+
 在将反向传播之前，有个很重要的微积分数学定理叫链式法则，也就是在求导的过程中，若目标包裹在多层函数中，需逐一对包裹的函数进行微分。
 例如需对如下方程求导：
 $$f(x)=sin(x^2+2)，求\frac{df}{dx}$$
@@ -92,8 +107,8 @@ $$\frac{df}{dx}=\frac{df}{du}*\frac{du}{dx}=cos(u)*2x=2x*cos(x)=2x*cos(x^2+2)$$
 #### 1.3.2.2 反向传播
 
 ##### 1.3.2.2.1 1层隐含层
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210102183216880.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTU3ODU2Nw==,size_16,color_FFFFFF,t_70)
 
-![1609294522969](C:\Users\BBD\AppData\Roaming\Typora\typora-user-images\1609294522969.png)
 
 还是用前面的前向传播的例子。
 
@@ -102,16 +117,21 @@ $$
 out_1 = A\odot w_1\tag{a}
 $$
 
+<div id="out_1">
+
 $$
 activation_1=f_{activation_1}(out_1)\tag{b}
 $$
 
 <div id="activation_1">
 
+
 $$
 out_2 = activation_1 \odot w_2\tag{c}
 $$
+
 <div id="out_2">
+
 
 $$
 activation_2=f_{activaton_2}(out_2)\tag{d}
@@ -141,7 +161,9 @@ $$
 > $$
 > f'(x)=f(x)(1-f(x)) \tag{1}
 > $$
+>
 > <div id="sigmoid">
+> 
 >
 > 损失函数是MSE：(乘上$1\over2$为了方便抵消常数项)
 > $$
@@ -164,7 +186,7 @@ $$
 
    因为激活函数是sigmoid，因此：
    $$
-   activation_2=f_{activaton_2}(out_2)=\frac{1}{1+e^{-out_2}}​
+   activation_2=f_{activaton_2}(out_2)=\frac{1}{1+e^{-out_2}}
    $$
    所以，根据[公式（1）](#sigmoid)：
 
@@ -228,6 +250,7 @@ $$
 $$
 \Gamma derive_{out}=\Gamma loss \otimes \Gamma activation_2\tag{5}
 $$
+
 $$
 维度为：(m, 1)
 $$
@@ -248,7 +271,7 @@ $$
 
 1. $\frac{\partial out_2}{\partial activation_1}$
 
-   根据 [式(c)](#out_2)：$out_2 = activation_1 \odot w_2$
+   根据 [式\(c\)](#out_2)：$out_2 = activation_1 \odot w_2$
 
    因此：
 
@@ -266,16 +289,15 @@ $$
    $$
    \frac{\partial activation_1}{\partial out_1}=out_1(1-out_1)
    $$
-   
+
 3. $\frac{\partial out_1}{\partial w_1}$
 
-   根据式(a)：$out_1 = A\odot w_1$
+   根据[式(a)](#out_1)：$out_1 = A\odot w_1$
 
    因此：
    $$
    \frac{\partial out_1}{\partial w_1}=A
    $$
-   
 
 
 最终对$w_1$的反向传播结果：
@@ -364,8 +386,8 @@ $$
   
 
 ##### 1.3.2.2.2 2层隐含层
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210102184127147.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTU3ODU2Nw==,size_16,color_FFFFFF,t_70)
 
-![1609295935102](C:\Users\BBD\AppData\Roaming\Typora\typora-user-images\1609295935102.png)
 
 为了方便推导规律，假设这里新加的隐含层是从第一层加上的，设置为2个神经元。
 
@@ -524,8 +546,8 @@ $$
    $$
    \frac{\partial activation_2}{\partial out_2}=out_2(1-out_2)
    $$
-   
-3.  $\frac{\partial out_2}{\partial w_2}$
+
+3. $\frac{\partial out_2}{\partial w_2}$
 
    根据式()：$out_2 = activation_1\odot w_2$
 
@@ -539,7 +561,7 @@ $$
 - $\Gamma out_3act_2$ 表示 $\frac {\partial out_3}{\partial activation_2}=w_3$，(4, 1)
   - 输出层**原函数对上一层激活输出的偏导**，因为结果是 $w_3$， $w_3$ 的维度 (隐含层神经元个数, 输出层神经元个数)，也就是 (4, 1)
 
-- $ \Gamma activation_2$ 表示 $\frac{\partial activation_2}{\partial out_2}=out_2(1-out_2)$，(m, 4)
+- $\Gamma activation_2$ 表示 $\frac{\partial activation_2}{\partial out_2}=out_2(1-out_2)$，(m, 4)
   - 隐含层**激活输出对原输出的偏导**，因为 $out_2$ 是由 $activation_1 \odot w_2$ 得到的结果，即 $(m, 2) \odot(2, 4)=(m,4) $ ，所以该结果维度是 (m, 4)
 
 - $\Gamma out_2$ 表示 $\frac{\partial out_2}{\partial w_2}=activation_1$ ，(m, 2)
@@ -725,7 +747,7 @@ $$
    $$
    (m, 输入层神经元个数)^T\odot \Gamma (m, 该层的神经元个数)=(输入层神经元个数, 该层神经元个数)
    $$
-   
+
 
    ```python
    # last_derive: 前一层传递的偏导，shape: (m, next_n下一层神经元个数)
@@ -773,7 +795,7 @@ def mse(true_y, prediction_y, derive=False):
 ```python
 def mae(true_y, prediction_y, derive=False):
     if derive:
-        return 1 / true_y.shape[0] * np.abs(prediction_y - true_y)
+        return 1 / true_y.shape[0] * np.where(true_y - prediction_y > 0, prediction_y - true_y, true_y - prediction_y)
     else:
         return 1 / true_y.shape[0] * np.sum(np.abs(true_y - prediction_y))
 ```
@@ -826,6 +848,7 @@ elif batch_size:
 
 
 ## 3.3 Momentum
+
 [On the importance of initialization and momentum in deep learning](http://www.cs.toronto.edu/~fritz/absps/momentum.pdf)
 
 计算了基于梯度的移动指数平均（一阶梯度）
@@ -878,15 +901,15 @@ AdaGrad 是在普通的梯度下降基础上，计算了一个基于累积梯度
 
 [Adadelta - an adaptive learning rate method](https://arxiv.org/pdf/1212.5701.pdf)
 AdaDelta 是在AdaGrad基础上做了很多改进。论文中提出AdaGrad会存储所有的累加梯度评分和，这样在计算的时候并不高效，所以采用了计算了一个基于梯度平方和的指数移动平均的自适应比重，作为学习率的自适应参数。
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210104171454138.png)
 
-![1609382958716](C:\Users\BBD\AppData\Roaming\Typora\typora-user-images\1609382958716.png)
 
 并且讲学习率也采用了同样的方法，彻底摒弃了学习率的这个参数，采用完全自适应的方法进行学习
 
-![1609383151244](C:\Users\BBD\AppData\Roaming\Typora\typora-user-images\1609383151244.png)
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210104171507579.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTU3ODU2Nw==,size_16,color_FFFFFF,t_70)
+
 
 ```python
-
 def calc_ewa_squared_value(self, last_ewa_squared_value, this_value):
     # https://arxiv.org/pdf/1212.5701.pdf (8)
     return self.beta * last_ewa_squared_value + (1 - self.beta) * np.power(this_value, 2)
@@ -962,6 +985,7 @@ def update_target(self, target, gradient, last_rprop):
 
 
 ## 3.5 Adam
+
 [ADAM: A METHOD FOR STOCHASTIC OPTIMIZATION](https://arxiv.org/pdf/1412.6980v8.pdf)
 
 Adam是目前用到的较多的优化器了，集成了Momentum和RMSProp/AdaDelta的方法，对梯度既使用了动量，也增加了指数平均的梯度平方和，最终还对两项值进行了优化，解决训练初始时，初始值为0，导致参数逼近会趋近于0的情况，所以引入了轮次的参数。
@@ -1024,6 +1048,7 @@ def update_target(self, target, gradient, last_momentum, last_ewa_squared_gradie
 
 
 # 4. 激活函数
+
 ## 4.1 sigmoid
 
 ```python
@@ -1036,6 +1061,7 @@ def sigmoid(x, derive=False):
 
 
 ## 4.2 softmax
+
 ## 4.3 relu
 
 ```python
@@ -1108,4 +1134,3 @@ prediction_proba = nn.predict_proba(X_test)
 # 计算准确率
 nn.calc_accuracy(y_test, prediction_y)
 ```
-
