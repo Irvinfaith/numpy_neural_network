@@ -15,16 +15,15 @@ def mse(true_y, prediction_y, derive=False):
     if derive:
         return 2 / true_y.shape[0] * (prediction_y - true_y)
     else:
-        return 1 / true_y.shape[0] * np.sum((true_y - prediction_y) ** 2)
+        return np.mean((true_y - prediction_y) ** 2)
 
 
 def mae(true_y, prediction_y, derive=False):
     if derive:
-        return 1 / true_y.shape[0] * np.where(true_y - prediction_y > 0, prediction_y - true_y, true_y - prediction_y)
-        # return 1 / true_y.shape[0] * np.where(true_y - prediction_y > 0, true_y - prediction_y, prediction_y - true_y)
+        return 1 / true_y.shape[0] * (prediction_y - true_y)
     else:
-        return 1 / true_y.shape[0] * np.sum(np.abs(true_y - prediction_y))
-
+        return np.mean(np.abs(true_y - prediction_y))
+#
 # def logloss(true_y, prediction_y, derive=False, epsilon=1e-9):
 #     true_y = np.array(true_y)
 #     prediction_y = np.array(prediction_y)

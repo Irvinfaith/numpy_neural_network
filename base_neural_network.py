@@ -10,12 +10,14 @@ from collections import OrderedDict
 from warnings import warn
 
 import networkx as nx
+import numpy as np
 from matplotlib import pyplot as plt
 
-from optimizer import *
-import cost_function
 
 class NeuralNetwork:
+    """
+    自定义神经网络，初始化需定义输入的神经元个数，以及是否启用偏置项
+    """
     def __init__(self, feature_num, bias=True):
         self.num_input = feature_num
         self.bias = bias
@@ -120,14 +122,12 @@ class NeuralNetwork:
     def _get_path_by_edge(self, start, end, path: str):
         # path 用 | 分割
         _out = []
-        for _ in nn._get_path_by_node(start, end):
+        for _ in self._get_path_by_node(start, end):
             str_path = '|'.join(_)
             if path in str_path:
                 _out.append(_)
         return _out
 
-    # todo: 1. 更多激活函数，目前sigmoid；2. 更多优化器，目前SGD，计划加入MBGD，以及momentum，ada等方法；
-    #  3. 更多权重初始化的方法，目前Xavier；4. 更多损失函数，目前MSE
     def fit(self, X, y, optimizer, loss="mse", epoch=50, batch_size=64, threshold=0.5):
         """
 
@@ -191,7 +191,7 @@ class NeuralNetwork:
         # 若是多分类，需将y转为onehot
         if self.is_multi:
             trans_y = np.zeros((y.shape[0], self.num_classes))
-            for index, _ in enumerate(y_test):
+            for index, _ in enumerate(y):
                 trans_y[index][_] += 1
             y = trans_y
         # 批量梯度下降
@@ -428,7 +428,7 @@ class NeuralNetwork:
             y_prediciton = y_prediciton.reshape(1, -1)[0]
         true_count = sum(y_true == y_prediciton)
         accuracy = true_count / y_true.shape[0]
-        print(accuracy)
+        # print(accuracy)
         return accuracy
 
     def predict(self, X, threshold=0.5):
@@ -485,55 +485,3 @@ class NeuralNetwork:
             font_color='black'
         )
         plt.show()
-
-
-if __name__ == '__main__':
-    # x = np.random.randn(100, 26)
-    # y = np.random.randint(0, 2, 100)
-    # nn = NeuralNetwork(26)
-    # nn.add_dense_layer(32)
-    # nn.add_dense_layer(32)
-    # nn.add_dense_layer(16)
-    # nn.add_output_layer()
-    #
-    # nn.fit(x, y, epoch=100)
-    # prediction = nn.predict(x)
-    # nn.show_network()
-
-    from sklearn.datasets import load_breast_cancer
-    # from sklearn.datasets import load_iris
-    from sklearn.model_selection import train_test_split
-    from sklearn.preprocessing import MinMaxScaler
-
-    # data_loader = load_iris()
-    data_loader = load_breast_cancer()
-    data = data_loader['data']
-    mms = MinMaxScaler()
-    data = mms.fit_transform(data)
-
-
-    X_train, X_test, y_train, y_test = train_test_split(data, data_loader['target'], test_size=0.3, random_state=101)
-
-    nn = NeuralNetwork(30, False)
-    nn.add_dense_layer(64, "sigmoid")
-    nn.add_dense_layer(32, "sigmoid")
-    # nn.add_dropout_layer(0.8)
-    # nn.add_output_layer()
-    nn.add_output_layer(1, "sigmoid")
-    # nn.fit(np.array(x), np.array(y).reshape(-1,1), epoch=100, alpha=0.1)
-    # optimizer = AdaGrad(alpha=0.01)
-    # optimizer = AdaDelta(alpha=1, beta=0.95)
-    # optimizer = RMSProp(alpha=0.001, beta=0.9)
-    optimizer = Adam(alpha=0.05, beta_1=0.9, beta_2=0.99)
-    # optimizer = Adamax(alpha=0.05, beta_1=0.9, beta_2=0.99)
-    # optimizer = SGD(alpha=0.05, beta=0.99)
-    # optimizer = SGD(alpha=0.05)
-    nn.fit(X_train, y_train, epoch=100, batch_size=64, optimizer=optimizer, loss="mae")
-    prediction_y = nn.predict(X_test)
-    prediction_proba = nn.predict_proba(X_test)
-    dense_layer_info = nn.dense_layer_info
-    nn.calc_accuracy(y_test, prediction_y)
-    # from sklearn.metrics import precision_recall_curve
-    #
-    # precision_recall_curve(y_test, prediction_y)
-    # _better_view_cm(y_test, prediction_y)

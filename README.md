@@ -782,10 +782,10 @@ $$
 
 ```python
 def mse(true_y, prediction_y, derive=False):
-    total_loss = 1 / 2 * np.sum((true_y - prediction_y) ** 2)
     if derive:
-        return prediction_y - true_y
-    return total_loss
+        return 2 / true_y.shape[0] * (prediction_y - true_y)
+    else:
+        return np.mean((true_y - prediction_y) ** 2)
 ```
 
 
@@ -795,9 +795,9 @@ def mse(true_y, prediction_y, derive=False):
 ```python
 def mae(true_y, prediction_y, derive=False):
     if derive:
-        return 1 / true_y.shape[0] * np.where(true_y - prediction_y > 0, prediction_y - true_y, true_y - prediction_y)
+        return 1 / true_y.shape[0] * (prediction_y - true_y)
     else:
-        return 1 / true_y.shape[0] * np.sum(np.abs(true_y - prediction_y))
+        return np.mean(np.abs(true_y - prediction_y))
 ```
 
 
