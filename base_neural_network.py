@@ -166,12 +166,8 @@ class NeuralNetwork:
             # 预测结果
             prediction_proba = self._predict_proba(X, bias=False)
             prediction = self._predict(X, threshold, bias=False)
-            # mse
+            # 计算损失
             total_loss = self.loss_function(loss, y, prediction_proba)
-            # total_loss = cost_function.mse(y, prediction_proba)
-            # elif loss == "mae":
-
-            # total_loss = 1 / 2 * np.sum((y - prediction_proba) ** 2)
             # backprogation
             accuracy = self.calc_accuracy(y, prediction)
             print(f"Epoch {i + 1}/{epoch} - loss: {total_loss} - acc: {accuracy}")
