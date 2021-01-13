@@ -72,6 +72,15 @@ class BGD(SGD):
         return "BGD"
 
 
+class MBGD(SGD):
+    def __init__(self, alpha=0.01):
+        super().__init__(alpha)
+
+    @property
+    def name(self):
+        return "MBGD"
+
+
 class AdaGrad(Optimizer):
     def __init__(self, alpha=0.01, epsilon=1e-8):
         """

@@ -6,16 +6,14 @@ Created on 2021/1/5 11:09
 
 @email: Irvinfaith@hotmail.com
 """
-from base_neural_network import NeuralNetwork
-from optimizer import *
+from core.base_neural_network import NeuralNetwork
+from core.optimizer import *
 
 from sklearn.datasets import load_breast_cancer
-# from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
 # 导入样例数据
-# data_loader = load_iris()
 data_loader = load_breast_cancer()
 data = data_loader['data']
 # 进行归一化
@@ -50,4 +48,4 @@ prediction_y = nn.predict(X_test)
 # 预测概率
 prediction_proba = nn.predict_proba(X_test)
 # 输出每一层网络的信息
-dense_layer_info = nn.dense_layer_info
+dense_layer_info = nn.layer_info

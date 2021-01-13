@@ -26,7 +26,8 @@ def tanh(x, derive=False):
         return 1 - np.power(tanh(x), 2)
     return 2 * sigmoid(np.multiply(2, x)) - 1
 
-# def softmax(x, derive=False):
-#     # if derive:
-#
-#     return np.exp(x) / np.sum(np.exp(x))
+
+def softmax(x, derive=False):
+    if derive:
+        pass
+    return np.exp(x) * (1 / np.sum(np.exp(x), axis=1)).reshape(-1, 1)

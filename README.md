@@ -11,6 +11,7 @@
   - tanh
   - relu
 - 定义dropout
+- 支持多分类任务
 - 支持多种优化器
   - SGD
   - BSGD
@@ -25,7 +26,7 @@
 
 - [ ] 加入validation
 
-- [ ] 支持多分类任务
+- [x] 支持多分类任务
 
 - [ ] 加入卷积层（CNN）
 - [ ] 加入池化层
@@ -35,12 +36,14 @@
 
 # 3. 运行
 
-直接执行`main.py`，即可执行训练和预测
+直接执行`main_binary_classification.py`，即可执行二分类问题的训练和预测
 
+执行`main_multi_classification.py`，即可执行多分类问题的训练和预测
 
 
 ```shell
-python main.py
+python main_binary_classification.py
+
 """
 Epoch 1/100 - loss: 0.19804074649934453 - acc: 0.7462311557788944
 Epoch 10/100 - loss: 0.05641219571461576 - acc: 0.9447236180904522
